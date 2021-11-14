@@ -10,25 +10,12 @@ Tech Stacks Used:
 steps to reproduce:
 1. Login to AWS Console and Create an IAM user with Admin Role.
 2. Download the .csv Crdentials
-3. As a Best Practise, I have configured my Acess Key ID and Secret access key as a ENV Variables and added to the path so that it can support my Terraform and Packer deployments.
+3. As a Best Practise, I have configured my Acess Key ID and Secret access key as a ENV Variables and added to the path so that it can support my Terraform
 
 
 
 Tools Needs to be installed on Local Machine:
 
-In my case, I have windows as my local machine and below are the instructions.
-
-1. Packer - Download Scoop and Install Packer
-
-   Open Powershell as admin and run  below commands CurrentUser followed by iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
-   scoop install packer
-   ```bash
-   Set-ExecutionPolicy RemoteSigned -scope
-   iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
-   scoop install packer
-   ```
-   
-   For Linux/Macos- https://www.packer.io/docs/install
 
 
 2. Terraform - https://www.terraform.io/downloads.html -> Windows 64Bit and allow the download.
@@ -36,18 +23,14 @@ In my case, I have windows as my local machine and below are the instructions.
    
    
 
-Please follow the below steps for deploying the Docker Host via Packer:
+Please follow the below steps for deploying the Docker image via Jenkins
 
-1. Clone the Repo- git clone https://github.com/balajirajmohan/twdemo.git
-2. Run the packer build from local machine (twdemo\Packer) path to setup Docker Host which is likely an Amazon Linux with Docker installed via Packer.
+1. Clone the Repo- git clone https://github.com/balajirajmohan/equalexperts-iac.git
 
-   ```bash
-   packer build amibuild.json
-   ```
 
 Please follow the below steps for deploying the Jenkins Server Using Terraform:
 
-1. From Local Machine, navigate to twdemo\Terraform folder and follow the below steps:
+ From Local Machine, navigate to equalexperts-iac\Terraform\*resource Folder folder and follow the below steps:
 
    ```bash
    terraform init 
@@ -60,16 +43,14 @@ Please follow the below steps for deploying the Jenkins Server Using Terraform:
 2. From Terraform appply output, Please copy the public ip of EC2 vm and 
 
    ```bash
-   http://<Server-public-ip> to login to Server with port 8080
+   http://<Server-public-ip> to login to Server with port 8080 to access Jenkins and Install Plugins accordingly
    ```
    
-Establishing Connection between Jenkins Server and Docker Host:
+Establishing Connection between Jenkins Server and Application Server using SSM Agent
 
-1. .pem has been stored in Private S3 Bucket and Jenkins server can connect with s3 using aws s3 cp s3://pemkeytw/mediawiki.pem /root and can download the .pem of docker host
+1. Create an Role consisting of SSM Permissions to both Jenkins sevrer as well as App server
 
-2. ssh-keygen from Jenkins Server and id_rsa.pub has been moved to authorized_keys of Docker host to establish connection
-
-3. Now, Jenkins server would be able to connect to DockerHost for Build and Deploy actions
+2. Now, Jenkins server would be able to connect to DockerHost/App-server for Build and Deploy actions
 
 Jenkins Pipleine Creation:
 
@@ -83,20 +64,18 @@ Jenkins Pipleine Stages:
 
 1. Cloing our Github
 
-2. Building our image
+2. Building our image and Push to DockerHub
 
-3. Deploy our image
+3. Deploy our image via SSM Agent 
 
-4. Cleaning up 
 
-5. deploy into Docker Host
 
 Pre-requisites needs to be done:
 
 1. Add docker permisisons for Jenkins user.
-2. Open port 8080 in Docker Host machine to expose the application publicly.
-3. SSH Public keys needs to shared from Jenkins Host to Docker host for secure SSH Connection.
-4. Please note that Jenkins terraform script needs to be execured first and Packer build then after.
+2. Open port 8080 in Jenkins server  to expose the application publicly.
+3. Create an IAM role with SSM Permissions for both Jenkins and App server
+4. Please note that Jenkins terraform script needs to be execured first
 
 
 

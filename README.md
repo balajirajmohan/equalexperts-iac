@@ -1,4 +1,4 @@
-# Thoughtworks - Mediawiki Application deployment using CI-CD pipeline
+# EqualExperts - Spring Petclinic Application Deployment
 
 Tech Stacks Used:
 
